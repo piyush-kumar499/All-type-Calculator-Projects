@@ -49,14 +49,6 @@ The calculator shows:
 - Total minutes you've lived
 - Total seconds you've lived
 
-## Screenshots 📸
-
-The calculator features:
-- Clean, centered design
-- Green color theme
-- Easy-to-read results in separate boxes
-- Mobile-friendly responsive layout
-
 ## Future Improvements 🚀
 
 Some ideas for enhancing this project:
