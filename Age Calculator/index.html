@@ -1,1 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Age Calculator</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: lightgray;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: green;
+            font-size: 30px;
+        }
+        
+        .main-box {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px gray;
+        }
+        
+        label {
+            font-weight: bold;
+            display: block;
+            margin: 10px 0 5px 0;
+        }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid gray;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: green;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: darkgreen;
+        }
+        
+        .answer {
+            margin-top: 20px;
+        }
+        
+        .answer-box {
+            background-color: #f0f0f0;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .big-text {
+            font-weight: bold;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-box">
+        <h1>Age Calculator</h1>
+        
+        <label>Enter Your Birth Date:</label>
+        <input type="date" id="birthDate">
+        
+        <label>Enter Current Date:</label>
+        <input type="date" id="currentDate">
+        
+        <button onclick="calculateMyAge()">Calculate My Age</button>
+        
+        <div id="answer" class="answer"></div>
+    </div>
 
+    <script>
+        // Set today's date automatically
+        var today = new Date();
+        var todayString = today.getFullYear() + '-' + 
+                         String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+                         String(today.getDate()).padStart(2, '0');
+        document.getElementById('currentDate').value = todayString;
+
+        function calculateMyAge() {
+            // Get the dates from input boxes
+            var birthDateValue = document.getElementById('birthDate').value;
+            var currentDateValue = document.getElementById('currentDate').value;
+            
+            // Check if both dates are entered
+            if (birthDateValue == '' || currentDateValue == '') {
+                document.getElementById('answer').innerHTML = '<div class="answer-box">Please enter both dates!</div>';
+                return;
+            }
+            
+            // Convert string dates to Date objects
+            var birthDate = new Date(birthDateValue);
+            var currentDate = new Date(currentDateValue);
+            
+            // Calculate years, months, days
+            var years = currentDate.getFullYear() - birthDate.getFullYear();
+            var months = currentDate.getMonth() - birthDate.getMonth();
+            var days = currentDate.getDate() - birthDate.getDate();
+            
+            // Fix negative days
+            if (days < 0) {
+                months = months - 1;
+                var lastMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0);
+                days = days + lastMonth.getDate();
+            }
+            
+            // Fix negative months
+            if (months < 0) {
+                years = years - 1;
+                months = months + 12;
+            }
+            
+            // Calculate total values
+            var totalDays = Math.floor((currentDate - birthDate) / (1000 * 60 * 60 * 24));
+            var totalHours = totalDays * 24;
+            var totalMinutes = totalHours * 60;
+            var totalSeconds = totalMinutes * 60;
+            var totalMonths = years * 12 + months;
+            
+            // Show the results
+            var result = '';
+            result += '<div class="answer-box">Your Age: <span class="big-text">' + years + '</span> years, <span class="big-text">' + months + '</span> months, <span class="big-text">' + days + '</span> days</div>';
+            result += '<div class="answer-box">Total Months: <span class="big-text">' + totalMonths + '</span></div>';
+            result += '<div class="answer-box">Total Days: <span class="big-text">' + totalDays + '</span></div>';
+            result += '<div class="answer-box">Total Hours: <span class="big-text">' + totalHours + '</span></div>';
+            result += '<div class="answer-box">Total Minutes: <span class="big-text">' + totalMinutes + '</span></div>';
+            result += '<div class="answer-box">Total Seconds: <span class="big-text">' + totalSeconds + '</span></div>';
+            
+            document.getElementById('answer').innerHTML = result;
+        }
+    </script>
+</body>
+</html>
