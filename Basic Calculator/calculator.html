@@ -1,1 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Calculator</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: lightblue;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        
+        .calculator-box {
+            width: 300px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 5px 5px 15px gray;
+        }
+        
+        .screen {
+            width: 100%;
+            height: 80px;
+            background-color: black;
+            color: white;
+            font-size: 24px;
+            text-align: right;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+        
+        .expression-text {
+            font-size: 16px;
+            color: lightgray;
+            margin-bottom: 5px;
+        }
+        
+        .result-text {
+            font-size: 24px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 10px;
+        }
+        
+        button {
+            width: 100%;
+            height: 60px;
+            font-size: 20px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            background-color: lightgray;
+            color: black;
+        }
+        
+        button:hover {
+            background-color: gray;
+            color: white;
+        }
+        
+        .number-btn {
+            background-color: #e0e0e0;
+        }
+        
+        .operator-btn {
+            background-color: orange;
+            color: white;
+        }
+        
+        .equals-btn {
+            background-color: darkorange;
+            color: white;
+        }
+        
+        .clear-btn {
+            background-color: red;
+            color: white;
+        }
+        
+        .function-btn {
+            background-color: lightblue;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-box">
+        <div class="screen">
+            <div class="expression-text" id="expressionText"></div>
+            <div class="result-text" id="resultText">0</div>
+        </div>
+        
+        <div class="buttons">
+            <button class="clear-btn" onclick="clearAll()">AC</button>
+            <button class="function-btn" onclick="addToExpression('%')">%</button>
+            <button class="function-btn" onclick="deleteOne()">⌫</button>
+            <button class="operator-btn" onclick="addToExpression('/')">÷</button>
+            
+            <button class="number-btn" onclick="addToExpression('7')">7</button>
+            <button class="number-btn" onclick="addToExpression('8')">8</button>
+            <button class="number-btn" onclick="addToExpression('9')">9</button>
+            <button class="operator-btn" onclick="addToExpression('*')">×</button>
+            
+            <button class="number-btn" onclick="addToExpression('4')">4</button>
+            <button class="number-btn" onclick="addToExpression('5')">5</button>
+            <button class="number-btn" onclick="addToExpression('6')">6</button>
+            <button class="operator-btn" onclick="addToExpression('-')">−</button>
+            
+            <button class="number-btn" onclick="addToExpression('1')">1</button>
+            <button class="number-btn" onclick="addToExpression('2')">2</button>
+            <button class="number-btn" onclick="addToExpression('3')">3</button>
+            <button class="operator-btn" onclick="addToExpression('+')">+</button>
+            
+            <button class="number-btn" onclick="addToExpression('00')">00</button>
+            <button class="number-btn" onclick="addToExpression('0')">0</button>
+            <button class="number-btn" onclick="addToExpression('.')">.</button>
+            <button class="equals-btn" onclick="calculateResult()">=</button>
+        </div>
+    </div>
 
+    <script>
+        // Get screen elements
+        var expressionScreen = document.getElementById('expressionText');
+        var resultScreen = document.getElementById('resultText');
+        
+        // Store the current expression
+        var currentExpression = '';
+        
+        // List of operators
+        var operatorList = ['+', '-', '*', '/'];
+        
+        // Function to add numbers and operators
+        function addToExpression(value) {
+            var lastCharacter = currentExpression[currentExpression.length - 1];
+            
+            // Handle multiple operators
+            if (operatorList.includes(lastCharacter) && operatorList.includes(value)) {
+                if (value === '-' && (lastCharacter === '*' || lastCharacter === '/')) {
+                    currentExpression = currentExpression + value;
+                } else {
+                    currentExpression = currentExpression.slice(0, -1) + value;
+                }
+            } else {
+                currentExpression = currentExpression + value;
+            }
+            
+            // Update the screen with symbols
+            var displayText = currentExpression.replace(/\*/g, '×').replace(/\//g, '÷');
+            expressionScreen.innerText = displayText;
+            
+            // Show live calculation
+            showLiveResult();
+        }
+        
+        // Function to clear everything
+        function clearAll() {
+            currentExpression = '';
+            expressionScreen.innerText = '';
+            resultScreen.innerText = '0';
+        }
+        
+        // Function to delete last character
+        function deleteOne() {
+            currentExpression = currentExpression.slice(0, -1);
+            var displayText = currentExpression.replace(/\*/g, '×').replace(/\//g, '÷');
+            expressionScreen.innerText = displayText;
+            
+            if (currentExpression === '') {
+                resultScreen.innerText = '0';
+            } else {
+                showLiveResult();
+            }
+        }
+        
+        // Function to calculate final result
+        function calculateResult() {
+            try {
+                var result = eval(currentExpression);
+                currentExpression = result.toString();
+                expressionScreen.innerText = currentExpression;
+                resultScreen.innerText = '';
+            } catch (error) {
+                resultScreen.innerText = 'Error';
+                currentExpression = '';
+            }
+        }
+        
+        // Function to show live calculation
+        function showLiveResult() {
+            try {
+                if (currentExpression === '') {
+                    resultScreen.innerText = '0';
+                    return;
+                }
+                
+                var lastChar = currentExpression[currentExpression.length - 1];
+                
+                // Check if there's at least one operator
+                var hasOperator = false;
+                for (var i = 0; i < currentExpression.length; i++) {
+                    if (operatorList.includes(currentExpression[i])) {
+                        hasOperator = true;
+                        break;
+                    }
+                }
+                
+                if (hasOperator && !operatorList.includes(lastChar)) {
+                    var result = eval(currentExpression);
+                    if (!isNaN(result)) {
+                        resultScreen.innerText = '= ' + result.toString();
+                    }
+                } else {
+                    resultScreen.innerText = currentExpression || '0';
+                }
+            } catch (error) {
+                resultScreen.innerText = currentExpression || '0';
+            }
+        }
+    </script>
+</body>
+</html>
