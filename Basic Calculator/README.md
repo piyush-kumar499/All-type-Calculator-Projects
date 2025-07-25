@@ -1,3 +1,7 @@
+# Screenshots
+
+![image alt](https://github.com/piyush-kumar499/B.tec-1st-Year-Projects/blob/3ef36cc6ebe7c6f3186ac1cb61dbfec12d59e9bd/Basic%20Calculator/Screenshot_2025-07-25-19-46-29-74_40deb401b9ffe8e1df2f1cc5ba480b12.jpg)
+
 # Simple Calculator 🧮
 
 A basic web-based calculator that can perform all essential mathematical operations with a clean and user-friendly interface.
