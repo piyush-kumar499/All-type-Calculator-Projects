@@ -1,3 +1,7 @@
+# Screenshots
+
+![image alt](https://github.com/piyush-kumar499/B.tec-1st-Year-Projects/blob/300e525b6a144c5ab06ca3c1b4ecdf72f6261c0c/Age%20Calculator/screenshot%20.jpg)
+
 # Age Calculator 🎂
 
 A simple web-based age calculator that helps you calculate your exact age in years, months, days, hours, minutes, and seconds!
