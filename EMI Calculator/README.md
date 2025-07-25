@@ -1,6 +1,6 @@
 # EMI Calculator
 
-![Screenshot](screenshot.png)
+![Screenshot](https://github.com/piyush-kumar499/All-type-Calculator-Projects/blob/4c9bf8cad276033985d13c88821460787b394ead/EMI%20Calculator/screenshot.jpg)
 
 A simple web-based EMI (Equated Monthly Installment) calculator that helps you calculate your loan EMI, total amount, and interest.
 
