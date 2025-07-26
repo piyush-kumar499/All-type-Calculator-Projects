@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            text-align: center;
+        }
+        .unit-switch {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .unit-switch button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ddd;
+            cursor: pointer;
+        }
+        .unit-switch button.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .gender-group, .unit-group {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 15px;
+        }
+        .gender-group input, .unit-group input {
+            margin-right: 5px;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+        .buttons button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+        .buttons button.clear-btn {
+            background-color: #dc3545;
+        }
+        #result {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>BMI Calculator</h1>
+    <div class="unit-switch">
+        <button id="us-btn" class="active">US Units</button>
+        <button id="metric-btn">Metric Units</button>
+        <button id="other-btn">Other Units</button>
+    </div>
+    <form id="bmi-form">
+        <div class="form-group">
+            <label for="age">Age (ages: 2 - 120):</label>
+            <input type="number" id="age" name="age" min="2" max="120" required placeholder="Enter age between 2 - 120">
+        </div>
+        <div class="form-group gender-group">
+            <label>Gender:</label>
+            <label><input type="radio" name="gender" value="male" checked> Male</label>
+            <label><input type="radio" name="gender" value="female"> Female</label>
+        </div>
+        <div id="us-units" style="display: block;">
+            <div class="form-group">
+                <label>Height (feet and inches):</label>
+                <input type="number" id="height-ft" name="height-ft" placeholder="Feet">
+                <input type="number" id="height-in" name="height-in" placeholder="Inches">
+            </div>
+            <div class="form-group unit-group">
+                <label>Weight Unit:</label>
+                <label><input type="radio" name="us-weight-unit" value="pounds" checked> Pounds</label>
+                <label><input type="radio" name="us-weight-unit" value="kg"> Kilograms</label>
+            </div>
+            <div class="form-group">
+                <label id="us-weight-label">Weight:</label>
+                <input type="number" id="weight-lb" name="weight-lb" placeholder="Weight">
+            </div>
+        </div>
+        <div id="metric-units" style="display: none;">
+            <div class="form-group">
+                <label>Height (cm):</label>
+                <input type="number" id="height-cm" name="height-cm" placeholder="Centimeters">
+            </div>
+            <div class="form-group">
+                <label>Weight (kg):</label>
+                <input type="number" id="weight-kg" name="weight-kg" placeholder="Kilograms">
+            </div>
+        </div>
+        <div id="other-units" style="display: none;">
+            <div class="form-group unit-group">
+                <label>Height Unit:</label>
+                <label><input type="radio" name="other-height-unit" value="meters" checked> Meters</label>
+                <label><input type="radio" name="other-height-unit" value="inches"> Inches</label>
+                <label><input type="radio" name="other-height-unit" value="feet"> Feet</label>
+            </div>
+            <div class="form-group">
+                <label id="other-height-label">Height:</label>
+                <input type="number" id="height-other" name="height-other" placeholder="Height">
+            </div>
+            <div class="form-group unit-group">
+                <label>Weight Unit:</label>
+                <label><input type="radio" name="other-weight-unit" value="pounds" checked> Pounds</label>
+                <label><input type="radio" name="other-weight-unit" value="kg"> Kilograms</label>
+                <label><input type="radio" name="other-weight-unit" value="stones"> Stones</label>
+            </div>
+            <div class="form-group">
+                <label id="other-weight-label">Weight:</label>
+                <input type="number" id="weight-other" name="weight-other" placeholder="Weight">
+            </div>
+        </div>
+        <div class="buttons">
+            <button type="button" onclick="calculateBMI()">Calculate</button>
+            <button type="reset" class="clear-btn">Clear</button>
+        </div>
+    </form>
+    <div id="result"></div>
+</div>
+<script>
+    document.getElementById('us-btn').addEventListener('click', function () {
+        setUnitMode('us');
+    });
+    document.getElementById('metric-btn').addEventListener('click', function () {
+        setUnitMode('metric');
+    });
+    document.getElementById('other-btn').addEventListener('click', function () {
+        setUnitMode('other');
+    });
+    function setUnitMode(mode) {
+        document.getElementById('us-btn').classList.remove('active');
+        document.getElementById('metric-btn').classList.remove('active');
+        document.getElementById('other-btn').classList.remove('active');
+        if (mode === 'us') {
+            document.getElementById('us-btn').classList.add('active');
+            document.getElementById('us-units').style.display = 'block';
+            document.getElementById('metric-units').style.display = 'none';
+            document.getElementById('other-units').style.display = 'none';
+        } else if (mode === 'metric') {
+            document.getElementById('metric-btn').classList.add('active');
+            document.getElementById('us-units').style.display = 'none';
+            document.getElementById('metric-units').style.display = 'block';
+            document.getElementById('other-units').style.display = 'none';
+        } else if (mode === 'other') {
+            document.getElementById('other-btn').classList.add('active');
+            document.getElementById('us-units').style.display = 'none';
+            document.getElementById('metric-units').style.display = 'none';
+            document.getElementById('other-units').style.display = 'block';
+        }
+    }
+    function calculateBMI() {
+        let unitMode = document.querySelector('.unit-switch button.active').id;
+        let age = parseInt(document.getElementById('age').value);
+        let bmi = 0;
+        const emptyFields = validateInputs(unitMode);
+        if (emptyFields.length > 0) {
+            displayError(`Please fill in the following fields: ${emptyFields.join(', ')}`);
+            return;
+        } else {
+            clearError();
+        }
+        if (unitMode === 'us-btn') {
+            let heightFt = parseFloat(document.getElementById('height-ft').value) || 0;
+            let heightIn = parseFloat(document.getElementById('height-in').value) || 0;
+            let heightInches = (heightFt * 12) + heightIn;
+            let weightUnit = document.querySelector('input[name="us-weight-unit"]:checked').value;
+            let weight = parseFloat(document.getElementById('weight-lb').value) || 0;
+            if (weightUnit === 'kg') {
+                weight = weight * 2.20462;
+            }
+            bmi = (weight / (heightInches * heightInches)) * 703;
+        } else if (unitMode === 'metric-btn') {
+    let heightCm = parseFloat(document.getElementById('height-cm').value) || 0;
+    let weightKg = parseFloat(document.getElementById('weight-kg').value) || 0;
+    let heightMeters = heightCm / 100;
+    bmi = weightKg / (heightMeters * heightMeters);
+} else if (unitMode === 'other-btn') {
+    let heightOther = parseFloat(document.getElementById('height-other').value) || 0;
+    let heightUnit = document.querySelector('input[name="other-height-unit"]:checked').value;
+    let weightOther = parseFloat(document.getElementById('weight-other').value) || 0;
+    let weightUnit = document.querySelector('input[name="other-weight-unit"]:checked').value;
+
+    // Convert height to meters
+    if (heightUnit === 'inches') {
+        heightOther = heightOther * 0.0254; // Inches to meters
+    } else if (heightUnit === 'feet') {
+        heightOther = heightOther * 0.3048; // Feet to meters
+    }
+
+    // Convert weight to kg
+    if (weightUnit === 'pounds') {
+        weightOther = weightOther * 0.453592; // Pounds to kilograms
+    } else if (weightUnit === 'stones') {
+        weightOther = weightOther * 6.35029; // Stones to kilograms
+    }
+
+    bmi = weightOther / (heightOther * heightOther);
+}
+
+// Display result and BMI category
+let resultText = '';
+if (bmi > 0) {
+    const category = getBMICategory(bmi, age);  // Call the new function to get category based on age
+    resultText = `Your BMI is <strong>${bmi.toFixed(2)}</strong> (${category})`;
+} else {
+    resultText = 'Please enter valid inputs!';
+}
+
+document.getElementById('result').innerHTML = resultText;
+}
+
+function validateInputs(unitMode) {
+    const emptyFields = [];
+    if (!document.getElementById('age').value) {
+        emptyFields.push('Age');
+    }
+
+    if (unitMode === 'us-btn') {
+        if (!document.getElementById('height-ft').value && !document.getElementById('height-in').value) {
+            emptyFields.push('Height (feet and inches)');
+        }
+        if (!document.getElementById('weight-lb').value) {
+            emptyFields.push('Weight (pounds)');
+        }
+    } else if (unitMode === 'metric-btn') {
+        if (!document.getElementById('height-cm').value) {
+            emptyFields.push('Height (cm)');
+        }
+        if (!document.getElementById('weight-kg').value) {
+            emptyFields.push('Weight (kg)');
+        }
+    } else if (unitMode === 'other-btn') {
+        if (!document.getElementById('height-other').value) {
+            emptyFields.push('Height (other)');
+        }
+        if (!document.getElementById('weight-other').value) {
+            emptyFields.push('Weight (other)');
+        }
+    }
+
+    return emptyFields;
+}
+
+function displayError(message) {
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = `<span style="color: red;">${message}</span>`;
+}
+
+function clearError() {
+    document.getElementById('result').innerHTML = '';
+}
+
+function getBMICategory(bmi, age) {
+    if (age < 18) {
+        // Children BMI categories
+        if (bmi < 18.5) {
+            return 'Underweight';
+        } else if (bmi >= 18.5 && bmi < 24.9) {
+            return 'Normal weight';
+        } else if (bmi >= 25 && bmi < 29.9) {
+            return 'Overweight';
+        } else {
+            return 'Obese';
+        }
+    } else { 
+        // Adult BMI categories
+        if (bmi < 18.5) { 
+            return 'Underweight';
+        } else if (bmi >= 18.5 && bmi < 24.9) {
+            return 'Normal weight';
+        } else if (bmi >= 25 && bmi < 29.9) {
+            return 'Overweight';
+        } else {
+            return 'Obese';
+        }
+    }
+}
+</script>
+
+</body>
+</html>
