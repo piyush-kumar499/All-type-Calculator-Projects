@@ -67,17 +67,6 @@ A user-friendly web-based mortgage calculator that helps you estimate your month
 2. Open `Advance Mortgage Calculator.html` in your web browser
 3. Start calculating your mortgage payments!
 
-## File Structure
-
-```
-Advance Mortgage Calculator/
-├── Advance Mortgage Calculator.html    # Main application file
-├── screenshot 1.jpg                   # Application screenshots
-├── screenshot 2.jpg
-├── screenshot 3.jpg
-└── README.md                          # This file
-```
-
 ## Browser Compatibility
 
 This calculator works in all modern web browsers including:
