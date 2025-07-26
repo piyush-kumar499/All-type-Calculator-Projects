@@ -4,7 +4,7 @@ A simple EMI (loan) calculator with pie chart visualization.
 
 ## Screenshot
 
-![EMI Calculator](screenshot.png)
+![EMI Calculator](https://github.com/piyush-kumar499/All-type-Calculator-Projects/blob/222c0554813aae2a839f6ada6ea470a6d0fa977c/EMI%20Calculator%20v2.0/screenshot.jpg)
 
 ## What it does
 
