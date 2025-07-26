@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <h1 class="stylish-title">Advanced Mortgage Calculator</h1>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        .stylish-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 36px;
+            color: #0066cc;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: bold;
+            text-align: center;
+            -webkit-background-clip:
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        h2 {
+            color: #333;
+            text-align: center;
+        }
+        .input-group label {
+            display: inline-flex;
+            align-items: center;
+            font-size: 14px;
+            margin-bottom: 5px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .info-box {
+            display: none;
+            position: left;
+            width: 250px; /* Fixed width */
+            background-color: #EBF4FA;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            z-index: 100;
+            margin: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .info-icon {
+            cursor: pointer;
+            margin-left: 5px;
+            position: relative;
+        }
+        .info-icon:hover + .info-box,
+        .info-box:hover {
+            display: block;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .down-payment-group {
+            display: flex;
+        }
+        .down-payment-group input {
+            flex: 2;
+        }
+        .down-payment-group input:last-child {
+            flex: 1;
+            border-left: none;
+        }
+        .loan-term-group {
+            display: flex;
+            align-items: center;
+        }
+        .loan-term-group input {
+            width: 50px;
+            margin-right: 10px;
+        }
+        .loan-term-group input[type="range"] {
+            flex-grow: 1;
+        }
+        .expandable {
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+        .expandable-header {
+            font-size: 18px;
+            text-decoration: underline;
+            cursor: pointer;
+            color: #0056b3;
+            padding: 10px 0;
+            display: inline-block;
+            transition: color 0.3s ease;
+            margin: 0 auto;
+        }
+        .center-button {
+            text-align: center;
+            margin: 5px;
+        }
+        .expandable-header:hover {
+            color: #003d7a;
+        }
+        .hidden-options {
+            display: none;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .hidden-options.active {
+            display: block;
+        }
+        button {
+            background-color: #0066cc;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            margin: 12px auto;
+            font-weight: bold;
+            font-size: 15px;
+        }
+        #result {
+            margin-top: 20px;
+            display: none;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 300px;
+            margin: 0 auto;
+        }
+        .total-payment {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        .total-payment .amount {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .total-payment .per-month {
+            font-size: 14px;
+        }
+        .payment-breakdown {
+            margin-top: 20px;
+        }
+        .payment-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .payment-item .color-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .error {
+            color: red;
+            font-size: 0.9em;
+            display: none;
+            margin-top: 5px;
+            margin-bottom: 10px;
+        }
+        h3 {
+            text-align: center;
+        }
+        #clearButton {
+            background-color: red;
+            padding: 10px 15px;
+            color: white;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            margin: 5px auto;
+            font-weight: bold;
+        }
+        .payment-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .color-box {
+            width: 25px;
+            height: 13px;
+            margin-right: 1px;
+            border-radius: 2px;
+        }
+        .input-container {
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 0 3px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .result-value {
+            font-weight: bold;
+            font-size: 20px;
+        }
+        input {
+            height: 42px;
+            padding: 10px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        select {
+            height: 42px;
+            padding: 10px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="input-container">
+    <div class="input-group">
+        <label for="homePrice">Home price</label>
+        <span class="info-icon" data-tooltip="The price of the house you want to purchase." onclick="toggleInfoBox(event)">&#9432;</span>
+        <div class="info-box">The price of the house you want to purchase.</div>
+        <input type="number" id="homePrice" min="10000" max="1000000000" required>
+        <div id="homePriceError" class="error">Home price must be between $10,000 and $1,000,000,000.</div>
+    </div>
+    <div class="input-group">
+        <label for="downPayment">Down payment</label>
+        <span class="info-icon" data-tooltip="The amount of money you will pay upfront." onclick="toggleInfoBox(event)">&#9432;</span>
+        <div class="info-box">Portion of the sale price of a home that is not financed. Your down payment amount can affect the interest rate you get, as lenders typically offer lower rates for borrowers who make larger down payments.</div>
+        <div class="down-payment-group">
+            <input type="number" id="downPayment" min="0" required>
+            <input type="number" id="downPaymentPercentage" min="0" max="100" step="0.01" required>
+        </div>
+        <div id="downPaymentError" class="error">Down payment cannot exceed home price.</div>
+    </div>
+    <div class="input-group">
+        <label for="interestRate">Interest Rate</label>
+        <span class="info-icon" data-tooltip="The percentage rate charged on the loan annually." onclick="toggleInfoBox(event)">&#9432;</span>
+        <div class="info-box">Amount you'll pay each year to borrow the money for your loan, expressed as a percentage.</div>
+        <input type="number" id="interestRate" value="3.5" step="0.01" required>
+    </div>
+    <div class="input-group">
+        <label for="loanTerm">Loan term</label>
+        <span class="info-icon" data-tooltip="The number of years you will take to repay the loan." onclick="toggleInfoBox(event)">&#9432;</span>
+        <div class="info-box">The amount of time or number of years that you will have to repay a loan. Longer term mortgages can make your monthly payment amount smaller than shorter term loans by stretching out your payments over more years.</div>
+        <div class="loan-term-group">
+            <input type="number" id="loanTerm" min="1" max="50" value="1" required>
+            <input type="range" id="loanTermSlider" min="1" max="50" value="1">
+        </div>
+        <div id="loanTermError" class="error">Loan term must be between 1 and 50 years.</div>
+    </div>
+    <div class="input-group">
+        <label for="zipCode">ZIP code (optional)</label>
+        <span class="info-icon" data-tooltip="Enter your ZIP code to estimate property taxes." onclick="toggleInfoBox(event)">&#9432;</span>
+        <div class="info-box">Enter your ZIP code to estimate property taxes and insurance.</div>
+        <input type="text" id="zipCode" placeholder="Put the location for better result">
+    </div>
+</div>
+<div class="center-button">
+    <div class="expandable-header" onclick="toggleOptions()">More Options &#9662;</div>
+    <div id="more-options" class="hidden-options expandable-content">
+        <div class="input-group">
+            <label for="creditScore">Credit Score</label>
+            <span class="info-icon" data-tooltip="Your credit score can affect your loan." onclick="toggleInfoBox(event)">&#9432;</span>
+            <div class="info-box">Your credit score can affect the interest rate and loan approval.</div>
+            <select id="creditScore">
+                <option value="0.0275" selected>740+</option>
+                <option value="0.029">720-739</option>
+                <option value="0.031">700-719</option>
+                <option value="0.0335">680-699</option>
+                <option value="0.036">660-679</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="propertyTax">Property tax per month</label>
+            <span class="info-icon" data-tooltip="The monthly property tax payment." onclick="toggleInfoBox(event)">&#9432;</span>
+            <div class="info-box">Any tax on real estate or certain other forms of property.</div>
+            <input type="number" id="propertyTax" min="0" step="0.01">
+        </div>
+        <div class="input-group">
+            <label for="insurance">Homeowner's insurance per month</label>
+            <span class="info-icon" data-tooltip="The monthly cost of insuring your home." onclick="toggleInfoBox(event)">&#9432;</span>
+            <div class="info-box">Financial protection that you purchase from an insurance provider. It helps pay for losses if a covered disaster or other damaging event affects your home.</div>
+            <input type="number" id="insurance" min="0" step="0.01">
+        </div>
+        <div class="input-group">
+            <label for="pmi">PMI per month</label>
+            <span class="info-icon" data-tooltip="Private Mortgage Insurance." onclick="toggleInfoBox(event)">&#9432;</span>
+            <div class="info-box">Private mortgage insurance (PMI): Insurance policy that compensates lenders for losses from a mortgage loan default.</div>
+            <input type="number" id="pmi" min="0" step="0.01">
+        </div>
+        <div class="input-group">
+            <label for="hoaFees">HOA fees per month</label>
+            <span class="info-icon" data-tooltip="Monthly fees for homeowners association." onclick="toggleInfoBox(event)">&#9432;</span>
+            <div class="info-box">Homeowner's association (HOA) fee: Monthly or quarterly fee assessed by the HOA to pay for the services that it provides.</div>
+            <input type="number" id="hoaFees" min="0" step="0.01">
+        </div>
+    </div>
+    <button onclick="calculateMortgage()">Calculate</button>
+    <button id="clearButton" onclick="clearInputs()">Clear</button>
+</div>
+<div id="result">
+    <h3>Payment breakdown</h3>
+    <div class="chart-container">
+        <canvas id="mortgageChart"></canvas>
+        <div class="total-payment">
+            <div class="amount">$0</div>
+            <div class="per-month">/month</div>
+        </div>
+    </div>
+    <div class="payment-breakdown"></div>
+</div>
+
+<script>
+let mortgageChart;
+document.addEventListener('DOMContentLoaded', function() {
+    const expandableHeader = document.querySelector('.expandable-header');
+    const expandableContent = document.querySelector('.expandable-content');
+    expandableHeader.addEventListener('click', function() {
+        expandableContent.style.display = expandableContent.style.display === 'none' ? 'block' : 'none';
+    });
+    const homePrice = document.getElementById('homePrice');
+    const downPayment = document.getElementById('downPayment');
+    const downPaymentPercentage = document.getElementById('downPaymentPercentage');
+    const loanTerm = document.getElementById('loanTerm');
+    const loanTermSlider = document.getElementById('loanTermSlider');
+    homePrice.addEventListener('input', updateDownPaymentPercentage);
+    downPayment.addEventListener('input', updateDownPaymentPercentage);
+    downPaymentPercentage.addEventListener('input', updateDownPayment);
+    loanTerm.addEventListener('input', function() {
+        loanTermSlider.value = this.value;
+    });
+    loanTermSlider.addEventListener('input', function() {
+        loanTerm.value = this.value;
+    });
+});
+function updateDownPaymentPercentage() {
+    const homePrice = parseFloat(document.getElementById('homePrice').value) || 0;
+    const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+    const percentage = (downPayment / homePrice) * 100;
+    document.getElementById('downPaymentPercentage').value = percentage.toFixed(2);
+}
+function updateDownPayment() {
+    const homePrice = parseFloat(document.getElementById('homePrice').value) || 0;
+    const percentage = parseFloat(document.getElementById('downPaymentPercentage').value) || 0;
+    const downPayment = (homePrice * percentage) / 100;
+    document.getElementById('downPayment').value = downPayment.toFixed(2);
+}
+function calculateMortgage() {
+    if (!validateInputs()) {
+        return;
+    }
+    const homePrice = parseFloat(document.getElementById('homePrice').value);
+    const downPayment = parseFloat(document.getElementById('downPayment').value);
+    const loanTerm = parseInt(document.getElementById('loanTerm').value);
+    const propertyTax = parseFloat(document.getElementById('propertyTax').value) || 0;
+    const insurance = parseFloat(document.getElementById('insurance').value) || 0;
+    const pmi = parseFloat(document.getElementById('pmi').value) || 0;
+    const hoaFees = parseFloat(document.getElementById('hoaFees').value) || 0;
+    const interestRateInput = parseFloat(document.getElementById('interestRate').value) / 100;
+    const creditScoreInterestRate = parseFloat(document.getElementById('creditScore').value);
+    const loanAmount = homePrice - downPayment;
+    const monthlyInterestRate = interestRateInput / 12;
+    const monthlyPrincipalInterest = (loanAmount * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, loanTerm * 12)) /
+        (Math.pow(1 + monthlyInterestRate, loanTerm * 12) - 1);
+    const effectiveInterestRate = isNaN(interestRateInput) ? creditScoreInterestRate : interestRateInput;
+    const effectiveMonthlyInterestRate = effectiveInterestRate / 12;
+    const effectiveMonthlyPrincipalInterest = (loanAmount * effectiveMonthlyInterestRate * Math.pow(1 + effectiveMonthlyInterestRate, loanTerm * 12)) /
+        (Math.pow(1 + effectiveMonthlyInterestRate, loanTerm * 12) - 1);
+    const totalMonthlyPayment = effectiveMonthlyPrincipalInterest + propertyTax + insurance + pmi + hoaFees;
+    updateChart(effectiveMonthlyPrincipalInterest, propertyTax, insurance, pmi, hoaFees);
+    updatePaymentBreakdown(effectiveMonthlyPrincipalInterest, propertyTax, insurance, pmi, hoaFees);
+    document.querySelector('.total-payment .amount').textContent = `${totalMonthlyPayment.toFixed(2)}`;
+    document.getElementById('result').style.display = 'block';
+}
+function validateInputs() {
+    const homePrice = parseFloat(document.getElementById('homePrice').value);
+    const downPayment = parseFloat(document.getElementById('downPayment').value);
+    const loanTerm = parseInt(document.getElementById('loanTerm').value);
+    let isValid = true;
+    if (homePrice < 10000 || homePrice > 1000000000) {
+        document.getElementById('homePriceError').style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById('homePriceError').style.display = 'none';
+    }
+    if (downPayment > homePrice) {
+        document.getElementById('downPaymentError').style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById('downPaymentError').style.display = 'none';
+    }
+    if (loanTerm < 1 || loanTerm > 50) {
+        document.getElementById('loanTermError').style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById('loanTermError').style.display = 'none';
+    }
+    return isValid;
+}
+function updateChart(principalInterest, propertyTax, insurance, pmi, hoaFees) {
+    const ctx = document.getElementById('mortgageChart').getContext('2d');
+    if (mortgageChart) {
+        mortgageChart.destroy();
+    }
+    mortgageChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Principal & Interest', 'Property Tax', 'Homeowner\'s Insurance', 'PMI', 'HOA Fees'],
+            datasets: [{
+                data: [principalInterest, propertyTax, insurance, pmi, hoaFees],
+                backgroundColor: ['#3366cc', '#109618', '#990099', '#fd7e14', '#6610f2']
+            }]
+        },
+        options: {
+            cutout: '70%',
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+}
+
+function updatePaymentBreakdown(principalInterest, propertyTax, insurance, pmi, hoaFees) {
+    const breakdown = document.querySelector('.payment-breakdown');
+    breakdown.innerHTML = `
+        <div class="payment-item">
+            <div><span class="color-indicator" style="background-color: #3366cc;"></span>Principal & Interest</div>
+            <div>${principalInterest.toFixed(2)}</div>
+        </div>
+        <div class="payment-item">
+            <div><span class="color-indicator" style="background-color: #109618;"></span>Property Tax</div>
+            <div>${propertyTax.toFixed(2)}</div>
+        </div>
+        <div class="payment-item">
+            <div><span class="color-indicator" style="background-color: #990099;"></span>Homeowner's Insurance</div>
+            <div>${insurance.toFixed(2)}</div>
+        </div>
+        <div class="payment-item">
+            <div><span class="color-indicator" style="background-color: #fd7e14;"></span>PMI</div>
+            <div>${pmi.toFixed(2)}</div>
+        </div>
+        <div class="payment-item">
+            <div><span class="color-indicator" style="background-color: #6610f2;"></span>HOA Fees</div>
+            <div>$${hoaFees.toFixed(2)}</div>
+        </div>
+    `;
+}
+
+function clearInputs() {
+    document.getElementById('homePrice').value = '';
+    document.getElementById('downPayment').value = '';
+    document.getElementById('downPaymentPercentage').value = '';
+    const loanTermDefault = 1;
+    document.getElementById('loanTerm').value = loanTermDefault;
+    document.getElementById('loanTermSlider').value = loanTermDefault;
+    document.getElementById('zipCode').value = '';
+    document.getElementById('propertyTax').value = '';
+    document.getElementById('insurance').value = '';
+    document.getElementById('pmi').value = '';
+    document.getElementById('hoaFees').value = '';
+    document.getElementById('result').style.display = 'none';
+    document.querySelector('.total-payment .amount').textContent = '$0';
+    document.querySelector('.payment-breakdown').innerHTML = '';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const homePriceInput = document.getElementById('homePrice');
+    const zipCodeInput = document.getElementById('zipCode');
+    const propertyTaxInput = document.getElementById('propertyTax');
+    const insuranceInput = document.getElementById('insurance');
+    homePriceInput.addEventListener('input', updateValues);
+    zipCodeInput.addEventListener('input', updateValues);
+
+    function updateValues() {
+        const homePrice = parseFloat(homePriceInput.value) || 0;
+        const zipCode = zipCodeInput.value;
+        if (homePrice > 0) {
+            const propertyTaxRate = getPropertyTaxRate(zipCode);
+            const insuranceRate = getInsuranceRate(zipCode);
+            const annualPropertyTax = homePrice * propertyTaxRate;
+            const annualInsurance = homePrice * insuranceRate;
+            const monthlyPropertyTax = (annualPropertyTax / 12).toFixed(2);
+            const monthlyInsurance = (annualInsurance / 12).toFixed(2);
+            propertyTaxInput.value = monthlyPropertyTax;
+            insuranceInput.value = monthlyInsurance;
+        } else {
+            propertyTaxInput.value = '$';
+            insuranceInput.value = '$';
+        }
+    }
+
+    function getPropertyTaxRate(zipCode) {
+        return 0.012;
+    }
+
+    function getInsuranceRate(zipCode) {
+        return 0.0035;
+    }
+});
+
+function toggleInfoBox(event) {
+    const infoBox = event.target.nextElementSibling;
+    const isDisplayed = infoBox.style.display === 'block';
+    const allInfoBoxes = document.querySelectorAll('.info-box');
+    allInfoBoxes.forEach(box => box.style.display = 'none');
+    if (!isDisplayed) {
+        infoBox.style.display = 'block';
+    }
+}
+
+document.addEventListener('click', function(event) {
+    if (!event.target.classList.contains('info-icon')) {
+        const allInfoBoxes = document.querySelectorAll('.info-box');
+        allInfoBoxes.forEach(box => box.style.display = 'none');
+    }
+});
+
+function toggleOptions() {
+    const moreOptions = document.getElementById('more-options');
+    moreOptions.classList.toggle('active');
+}
+
+function updatePaymentBreakdown(principalInterest, propertyTax, insurance, pmi, hoaFees) {
+    const breakdown = document.querySelector('.payment-breakdown');
+    breakdown.innerHTML = `
+        <div class="payment-item">
+            <div class="color-box" style="background-color: #3366cc;"></div>
+            <div>Principal & Interest</div>
+            <div><span class="result-value">= ${principalInterest.toFixed(2)}</span></div>
+        </div>
+        <div class="payment-item">
+            <div class="color-box" style="background-color: #109618;"></div>
+            <div>Property Tax</div>
+            <div><span class="result-value">= ${propertyTax.toFixed(2)}</span></div>
+        </div>
+        <div class="payment-item">
+            <div class="color-box" style="background-color: #990099;"></div>
+            <div>Homeowner's Insurance</div>
+            <div><span class="result-value">= ${insurance.toFixed(2)}</span></div>
+        </div>
+        <div class="payment-item">
+            <div class="color-box" style="background-color: #fd7e14;"></div>
+            <div>PMI</div>
+            <div><span class="result-value">= ${pmi.toFixed(2)}</span></div>
+        </div>
+        <div class="payment-item">
+            <div class="color-box" style="background-color: #6610f2;"></div>
+            <div>HOA Fees</div>
+            <div><span class="result-value">= ${hoaFees.toFixed(2)}</span></div>
+        </div>
+    `;
+}
+</script>
+</body>
+</html>
