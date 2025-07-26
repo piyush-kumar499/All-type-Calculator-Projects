@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>EMI Calculator</title>
     <style>
         body {
@@ -103,7 +104,7 @@
     <h1>EMI Calculator</h1>
     
     <div class="input-group">
-        <label>Loan Amount (₹)</label>
+        <label>Loan Amount (Rs.)</label>
         <input type="number" id="loanAmount" value="100000" min="1000">
         <input type="range" id="loanSlider" min="1000" max="10000000" value="100000" step="1000">
     </div>
@@ -126,15 +127,15 @@
     <div class="results" id="results" style="display: none;">
         <div class="result-item">
             <span>Monthly EMI:</span>
-            <span class="result-value" id="emiResult">₹ 0</span>
+            <span class="result-value" id="emiResult">Rs. 0</span>
         </div>
         <div class="result-item">
             <span>Total Amount:</span>
-            <span class="result-value" id="totalResult">₹ 0</span>
+            <span class="result-value" id="totalResult">Rs. 0</span>
         </div>
         <div class="result-item">
             <span>Total Interest:</span>
-            <span class="result-value" id="interestResult">₹ 0</span>
+            <span class="result-value" id="interestResult">Rs. 0</span>
         </div>
     </div>
     
@@ -193,9 +194,9 @@ function calculateEMI() {
         var totalInterest = totalAmount - P;
         
         // Show results
-        document.getElementById('emiResult').textContent = '₹ ' + Math.round(emi);
-        document.getElementById('totalResult').textContent = '₹ ' + Math.round(totalAmount);
-        document.getElementById('interestResult').textContent = '₹ ' + Math.round(totalInterest);
+        document.getElementById('emiResult').textContent = 'Rs. ' + Math.round(emi);
+        document.getElementById('totalResult').textContent = 'Rs. ' + Math.round(totalAmount);
+        document.getElementById('interestResult').textContent = 'Rs. ' + Math.round(totalInterest);
         
         document.getElementById('results').style.display = 'block';
         
